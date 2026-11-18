@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calidad del agua · Tanque 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#EEF3F4;--sf:#fff;--ink:#12303D;--mu:#5E7681;--ln:#DAE4E7;--pe:#0F2F3E;--ok:#1F9D6B;--er:#D9902B;--bad:#D2493F;--ac:#0E8C9B}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font:15px/1.5 "Instrument Sans",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-variant-numeric:tabular-nums}
+button,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+header{position:sticky;top:0;z-index:5;background:var(--sf);border-bottom:1px solid var(--ln)}
+.bar{max-width:1280px;margin:auto;padding:12px 24px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.brand{display:flex;gap:10px;align-items:center;margin-right:auto}
+.brand svg{width:34px;height:34px}
+.brand b{display:block;font-size:16px;line-height:1.1}.brand span{font-size:12.5px;color:var(--mu)}
+nav{display:flex;gap:4px}
+nav a{padding:6px 12px;border-radius:8px;color:var(--mu);text-decoration:none;font-weight:500}
+nav a:hover{background:var(--bg);color:var(--ink)}
+.seg{display:flex;background:var(--bg);border-radius:10px;padding:3px}
+.seg button{border:0;background:none;padding:5px 12px;border-radius:8px;cursor:pointer;color:var(--mu);font-weight:500}
+.seg button[aria-pressed=true]{background:var(--sf);color:var(--ink);box-shadow:0 0 0 1px var(--ln)}
+.btn,select{border:1px solid var(--ln);background:var(--sf);border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:500}
+.btn:hover{border-color:var(--ac)}
+main{max-width:1280px;margin:auto;padding:24px;display:grid;gap:24px}
+h2{font-size:18px;font-weight:600}.sub{color:var(--mu);font-size:13.5px}
+.sec-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+#demo{display:none;background:#FFF4DD;border:1px solid #F0D595;border-radius:10px;padding:8px 14px;font-size:13.5px}
+.hero{background:var(--pe);color:#EAF4F6;border-radius:18px;padding:28px;display:grid;grid-template-columns:1fr 1.2fr;gap:32px;align-items:center}
+.hero h1{font-size:30px;line-height:1.15;font-weight:600;letter-spacing:-.01em;max-width:16em}
+.hero .meta{margin-top:14px;display:flex;gap:18px;flex-wrap:wrap;color:#9DBBC6;font-size:13.5px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;background:var(--ok)}
+.dot.bad{background:var(--bad)}.dot.er{background:var(--er)}.dot.off{background:#7B929B}
+.strip-h{display:flex;justify-content:space-between;font-size:13.5px;color:#9DBBC6;margin-bottom:8px}
+.strip-h b{color:#fff;font-size:22px;font-weight:600}
+.strip{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:2px;height:44px}
+.strip i{border-radius:2px;background:#27495A}.strip i.ok{background:#3DBE8B}.strip i.bad{background:#EF6A5E}.strip i.er{background:#E7A93F}
+.strip-f{display:flex;justify-content:space-between;font-size:12.5px;color:#7F9CA8;margin-top:6px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:18px}
+.card.bad{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad)}
+.card-h{display:flex;justify-content:space-between;align-items:center;font-weight:500;color:var(--mu)}
+.pill{font-size:12px;font-weight:600;padding:2px 9px;border-radius:99px;background:#E1F4EB;color:#14704B}
+.pill.bad{background:#FBE4E1;color:#A5322A}.pill.er{background:#FCEFD6;color:#8A5A10}
+.val{font-size:40px;font-weight:600;letter-spacing:-.02em;line-height:1.2;margin:6px 0 2px}
+.val small{font-size:15px;color:var(--mu);font-weight:500;margin-left:5px;letter-spacing:0}
+.gauge{position:relative;height:8px;border-radius:99px;background:#E6EDEF;margin:16px 0 6px}
+.gauge .band{position:absolute;top:0;bottom:0;background:#BFE7D4;border-radius:99px}
+.gauge .mk{position:absolute;top:-4px;width:4px;height:16px;margin-left:-2px;border-radius:2px;background:var(--ink);transition:left .6s}
+.gauge .mk.bad{background:var(--bad)}
+.gl{display:flex;justify-content:space-between;font-size:12px;color:var(--mu)}
+.spark{display:block;width:100%;height:34px;margin-top:12px}
+.avg{font-size:12.5px;color:var(--mu);margin-top:6px}
+.charts{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.chart{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:16px 16px 10px}
+.chart h3{font-size:15px;font-weight:600;display:flex;justify-content:space-between}
+.chart h3 span{font-weight:400;color:var(--mu);font-size:13px}
+.cv{position:relative;height:230px;margin-top:8px}
+.two{display:grid;grid-template-columns:1.6fr 1fr;gap:16px}
+.panel{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:18px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-weight:500;color:var(--mu);padding:8px 10px;border-bottom:1px solid var(--ln);font-size:13px}
+td{padding:10px;border-bottom:1px solid var(--ln);vertical-align:top}
+tr:last-child td{border:0}
+.chip{display:inline-block;border-radius:6px;padding:1px 8px;margin:0 4px 4px 0;font-size:12.5px;font-weight:500;background:#FBE4E1;color:#A5322A}
+.chip.er{background:#FCEFD6;color:#8A5A10}
+.cmp{display:grid;gap:14px}
+.cmp div div{display:flex;justify-content:space-between;font-size:14px;margin-bottom:5px}
+.cmp .t{height:8px;border-radius:99px;background:#E6EDEF;overflow:hidden}.cmp .t i{display:block;height:100%;border-radius:99px}
+.empty{padding:28px;text-align:center;color:var(--mu)}
+.err{background:var(--sf);border:1px solid var(--bad);border-radius:14px;padding:20px}
+.err pre{background:var(--bg);padding:12px;border-radius:8px;overflow:auto;font-size:13px;margin:10px 0}
+footer{color:var(--mu);font-size:13px;padding-bottom:8px}
+@media(max-width:1000px){.hero,.two{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.cards,.charts{grid-template-columns:1fr}.bar,main{padding:14px}nav{display:none}.hero{padding:20px}.hero h1{font-size:24px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header><div class="bar">
+  <div class="brand">
+    <svg viewBox="0 0 34 34"><rect width="34" height="34" rx="9" fill="#0F2F3E"/><path d="M17 6c4.5 5.5 7 9 7 12.5a7 7 0 0 1-14 0C10 15 12.500 11.500 17 6z" fill="#3DBE8B"/><path d="M13 19.500c.5 2 2 3.200 4 3.500" stroke="#0F2F3E" stroke-width="1.800" fill="none" stroke-linecap="round"/></svg>
+    <div><b>Calidad del agua</b><span>Universidad Cooperativa, Campus Neiva</span></div>
+  </div>
+  <nav><a href="#resumen">Resumen</a><a href="#historicos">Históricos</a><a href="#alertas">Alertas</a></nav>
+  <select id="ub" aria-label="Ubicación"></select>
+  <div class="seg" id="rng" role="group" aria-label="Periodo">
+    <button data-r="1h">1 h</button><button data-r="6h">6 h</button><button data-r="24h" aria-pressed="true">24 h</button><button data-r="7d">7 d</button><button data-r="30d">30 d</button>
+  </div>
+  <button class="btn" id="csv">Exportar CSV</button>
+</div></header>
+
+<main>
+  <div id="demo">Estás viendo datos de demostración, no son mediciones reales. <a href="#" id="live">Volver a datos reales</a></div>
+  <div id="error"></div><div id="diag"></div>
+
+  <section id="resumen" class="hero" aria-live="polite">
+    <div>
+      <h1 id="hh">Cargando lecturas…</h1>
+      <div class="meta" id="hm"></div>
+    </div>
+    <div>
+      <div class="strip-h"><span>Lecturas dentro de norma</span><b id="pc">—</b></div>
+      <div class="strip" id="strip"></div>
+      <div class="strip-f"><span id="s0"></span><span>Ahora</span></div>
+    </div>
+  </section>
+
+  <section class="cards" id="cards"></section>
+
+  <section id="historicos">
+    <div class="sec-h"><h2>Históricos</h2><span class="sub">La franja verde marca el rango permitido (Res. 2115 de 2007)</span></div>
+    <div class="charts" id="charts"></div>
+  </section>
+
+  <section id="alertas">
+    <div class="sec-h"><h2>Alertas</h2><span class="sub" id="asub"></span></div>
+    <div class="two">
+      <div class="panel"><div id="atab"></div></div>
+      <div class="panel"><h2 style="margin-bottom:14px;font-size:16px">Cumplimiento por parámetro</h2><div class="cmp" id="cmp"></div></div>
+    </div>
+  </section>
+  <footer>Rangos: pH 6,5 a 9,0 · turbiedad hasta 2 NTU · sólidos disueltos hasta 500 ppm (equivale a 1000 µS/cm) · temperatura 10 a 30 °C (definida por el proyecto).</footer>
+</main>
+
+<script>
+const CFG={url:"https://iletadtfsljzucuqythk.supabase.co",key:"sb_publishable_QfBKUR5zwDcx6NS24tegkQ_v-tIdZF6",table:"lecturas",pollMs:15000,cap:10000,online:180000};
+const P={
+ ph:{n:"pH",u:"",min:6.5,max:9,lo:0,hi:14,d:2,c:"#0E8C9B"},
+ turbidez:{n:"Turbidez",u:"NTU",min:0,max:2,lo:0,hi:5,d:1,c:"#A67C3A"},
+ tds:{n:"Sólidos disueltos",u:"ppm",min:0,max:500,lo:0,hi:1000,d:0,c:"#4C7BD9"},
+ temperatura:{n:"Temperatura",u:"°C",min:10,max:30,lo:0,hi:40,d:1,c:"#7B63C9"}};
+const K=Object.keys(P),R={"1h":36e5,"6h":216e5,"24h":864e5,"7d":6048e5,"30d":2592e6};
+let rows=[],range="24h",ub="",demo=/demo/.test(location.search),charts={};
+const $=s=>document.querySelector(s);
+const f=(v,d)=>v==null?"—":v.toFixed(d).replace(".",",");
+const fT=t=>new Date(t).toLocaleString("es-CO",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+const ago=ms=>ms<6e4?Math.round(ms/1e3)+" s":ms<36e5?Math.round(ms/6e4)+" min":ms<864e5?(ms/36e5).toFixed(1).replace(".",",")+" h":Math.round(ms/864e5)+" d";
+const dur=ms=>ms<6e4?"menos de 1 min":ago(ms);
+const out=(k,v)=>v!=null&&(v<P[k].min||v>P[k].max);
+const causes=r=>{const c=K.filter(k=>out(k,r[k]));if(r.temperatura==null)c.push("sensor");return c};
+const state=r=>{const c=causes(r);return c.some(x=>x!="sensor")?"bad":c.length?"er":"ok"};
+
+/* ---------- datos ---------- */
+async function api(q){const r=await fetch(`${CFG.url}/rest/v1/${CFG.table}?${q}`,{headers:{apikey:CFG.key}});if(!r.ok)throw new Error(r.status+" "+(await r.text()).slice(0,240));return r.json()}
+const pick=(x,re)=>{const k=Object.keys(x).find(k=>re.test(k));if(k==null)return null;const v=x[k];return v==null||v===""||isNaN(Number(v))?null:Number(v)};
+const norm=x=>{const t=Date.parse(x.fecha_hora||x.created_at);return isNaN(t)?null:{t,ub:x.ubicacion||"Sin nombre",ph:pick(x,/^ph($|_)/i),turbidez:pick(x,/^turb/i),tds:pick(x,/^tds/i),temperatura:pick(x,/^temp/i),alerta:!!x.alerta}};
+async function load(){
+  if(demo){rows=genDemo();return}
+  const since=encodeURIComponent(new Date(Date.now()-R[range]).toISOString());let all=[];
+  for(let o=0;o<CFG.cap;o+=1000){const b=await api(`select=*&fecha_hora=gte.${since}&order=fecha_hora.desc.nullslast&limit=1000&offset=${o}`);all.push(...b);if(b.length<1000)break}
+  window.raw=all[0];rows=all.map(norm).filter(Boolean).sort((a,b)=>a.t-b.t);
+}
+async function poll(){
+  if(demo){const l=rows[rows.length-1];if(l&&Date.now()-l.t>3e5)rows.push(demoRow(Date.now(),rows.length));}
+  else{const l=rows.length?rows[rows.length-1].t:Date.now()-R[range];
+    const b=await api(`select=*&fecha_hora=gt.${encodeURIComponent(new Date(l).toISOString())}&order=fecha_hora.asc&limit=1000`);
+    if(b.length)window.raw=b[b.length-1];b.map(norm).filter(x=>x&&x.t>l).forEach(x=>rows.push(x));}
+  const lim=Date.now()-R[range];rows=rows.filter(r=>r.t>=lim);
+}
+function demoRow(t,i){const h=new Date(t).getHours()+new Date(t).getMinutes()/60,bad=(i%260>230),n=()=>Math.random()-.5;
+  return{t,ub:"Tanque 1",ph:7.2+.25*Math.sin(i/40)+n()*.1+(bad?2.1:0),turbidez:Math.max(0,.7+.3*Math.sin(i/25)+n()*.2+(i%410>390?2.4:0)),tds:310+60*Math.sin(i/70)+n()*12,temperatura:24+3*Math.sin((h-9)/24*6.283)+n()*.3,alerta:false}}
+function genDemo(){const s=R[range],st=Math.max(3e4,s/700),a=[],now=Date.now();for(let t=now-s,i=0;t<=now;t+=st,i++)a.push(demoRow(t,i));return a}
+
+/* ---------- vista ---------- */
+const view=()=>rows.filter(r=>!ub||r.ub==ub);
+function render(){
+  const v=view(),now=Date.now();
+  $("#demo").style.display=demo?"block":"none";
+  const set=[...new Set(rows.map(r=>r.ub))];if(!ub&&set.length)ub=set[0];
+  $("#ub").innerHTML=set.map(s=>`<option ${s==ub?"selected":""}>${s}</option>`).join("")||"<option>Sin datos</option>";
+  hero(v,now);diag(v);cards(v);charts_(v,now);alerts(v,now);
+}
+function diag(v){const l=v[v.length-1],m=l&&!demo?K.filter(k=>l[k]==null):[];
+  $("#diag").innerHTML=m.length&&window.raw?`<div class="err" style="border-color:var(--er)"><b>No llegaron valores de: ${m.map(k=>P[k].n).join(", ")}</b>
+  <p class="sub">Esto es lo que Supabase devolvió en la última fila. Revisa si esas columnas existen con otro nombre o están vacías (null):</p><pre>${JSON.stringify(window.raw,null,2)}</pre></div>`:""}
+function hero(v,now){
+  const l=v[v.length-1];
+  if(!l){$("#hh").textContent="Sin lecturas en este periodo";$("#hm").innerHTML="El nodo no ha enviado datos o el periodo es muy corto. Prueba con un rango mayor.";$("#strip").innerHTML="";$("#pc").textContent="—";return}
+  const s=state(l),on=now-l.t<CFG.online;
+  $("#hh").textContent=s=="ok"?"El agua cumple con la norma":s=="bad"?"Hay parámetros fuera de rango":"Falla en el sensor de temperatura";
+  $("#hm").innerHTML=`<span><i class="dot ${on?s:"off"}"></i>${on?"Nodo ESP32 en línea":"Nodo sin señal"}</span><span>Última lectura hace ${ago(now-l.t)}</span><span>${v.length.toLocaleString("es-CO")} lecturas</span>`;
+  const N=64,t0=now-R[range],w=R[range]/N,b=Array.from({length:N},()=>null);
+  v.forEach(r=>{const i=Math.min(N-1,Math.floor((r.t-t0)/w));if(i<0)return;const x=state(r),c=b[i];b[i]=!c||x=="bad"||(x=="er"&&c=="ok")?x:c});
+  $("#strip").innerHTML=b.map((x,i)=>`<i class="${x||""}" title="${fT(t0+i*w)}: ${x=="ok"?"en norma":x=="bad"?"fuera de rango":x=="er"?"falla de sensor":"sin datos"}"></i>`).join("");
+  $("#pc").textContent=f(v.filter(r=>state(r)=="ok").length/v.length*100,1)+" %";
+  $("#s0").textContent=fT(t0);
+}
+function cards(v){
+  const l=v[v.length-1];
+  $("#cards").innerHTML=K.map(k=>{const p=P[k],x=l?l[k]:null,bad=out(k,x),pc=a=>Math.max(0,Math.min(100,(a-p.lo)/(p.hi-p.lo)*100));
+    const s=v.map(r=>r[k]).filter(z=>z!=null),av=s.length?s.reduce((a,b)=>a+b,0)/s.length:null;
+    const q=s.slice(-60),mn=Math.min(...q,p.min),mx=Math.max(...q,p.max),
+      pts=q.map((z,i)=>`${(i/Math.max(1,q.length-1)*100).toFixed(1)},${(30-(z-mn)/(mx-mn||1)*28).toFixed(1)}`).join(" ");
+    return`<article class="card ${bad?"bad":""}"><div class="card-h"><span>${p.n}</span><span class="pill ${x==null?"er":bad?"bad":""}">${x==null?"Sin lectura":bad?"Fuera de rango":"En norma"}</span></div>
+    <div class="val">${f(x,p.d)}<small>${p.u}</small></div>
+    <div class="gauge"><div class="band" style="left:${pc(p.min)}%;width:${pc(p.max)-pc(p.min)}%"></div>${x!=null?`<div class="mk ${bad?"bad":""}" style="left:${pc(x)}%"></div>`:""}</div>
+    <div class="gl"><span>${p.lo}</span><span>Permitido ${String(p.min).replace(".",",")} a ${String(p.max).replace(".",",")}</span><span>${p.hi}</span></div>
+    <svg class="spark" viewBox="0 0 100 32" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="${p.c}" stroke-width="1.8" vector-effect="non-scaling-stroke"/></svg>
+    <div class="avg">Promedio del periodo: ${f(av,p.d)} ${p.u}</div></article>`}).join("");
+}
+const band={id:"band",beforeDatasetsDraw(c,_,o){const{ctx,chartArea:a,scales:{y}}=c,t=y.getPixelForValue(Math.min(o.max,y.max)),b=y.getPixelForValue(Math.max(o.min,y.min));
+  ctx.save();ctx.fillStyle="rgba(31,157,107,.11)";ctx.fillRect(a.left,t,a.right-a.left,b-t);ctx.strokeStyle="rgba(31,157,107,.55)";ctx.setLineDash([4,4]);ctx.beginPath();
+  [o.min,o.max].forEach(z=>{if(z>y.min&&z<y.max){const p=y.getPixelForValue(z);ctx.moveTo(a.left,p);ctx.lineTo(a.right,p)}});ctx.stroke();ctx.restore()}};
+const STEPS=[6e4,3e5,6e5,9e5,18e5,36e5,72e5,108e5,216e5,432e5,864e5,1728e5];
+function series(v,k,t0,now){
+  const bm=Math.max(0,(now-t0)/380),g=new Map();
+  v.forEach(r=>{if(r[k]==null)return;const i=bm?Math.floor(r.t/bm):r.t,e=g.get(i)||{s:0,n:0,t:0};e.s+=r[k];e.t+=r.t;e.n++;g.set(i,e)});
+  const d=[];let prev=null;[...g.values()].forEach(e=>{const x=e.t/e.n;if(prev&&x-prev>Math.max(3e5,bm*3))d.push({x:prev+1,y:null});d.push({x,y:e.s/e.n});prev=x});return d}
+function charts_(v,now){
+  const box=$("#charts");if(!box.children.length)box.innerHTML=K.map(k=>`<div class="chart"><h3>${P[k].n}<span id="r_${k}"></span></h3><div class="cv"><canvas id="c_${k}"></canvas></div></div>`).join("");
+  const t0=now-R[range];
+  K.forEach(k=>{const p=P[k],d=series(v,k,t0,now),ys=d.map(z=>z.y).filter(z=>z!=null);
+    $("#r_"+k).textContent=ys.length?`mín ${f(Math.min(...ys),p.d)}   máx ${f(Math.max(...ys),p.d)} ${p.u}`:"";
+    const lo=Math.min(p.min,...ys),hi=Math.max(p.max,...ys),pad=(hi-lo)*.12;
+    let c=charts[k];
+    if(!c){c=charts[k]=new Chart($("#c_"+k),{type:"line",plugins:[band],data:{datasets:[{data:[],borderColor:p.c,backgroundColor:p.c+"22",fill:false,borderWidth:2,tension:.25,pointRadius:ctx=>out(k,ctx.raw&&ctx.raw.y)?3.5:0,pointBackgroundColor:"#D2493F",pointBorderColor:"#D2493F",pointHoverRadius:4}]},
+      options:{responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:"nearest",axis:"x",intersect:false},
+        plugins:{legend:{display:false},band:{min:p.min,max:p.max},tooltip:{displayColors:false,callbacks:{title:i=>fT(i[0].parsed.x),label:i=>`${p.n}: ${f(i.parsed.y,p.d)} ${p.u}`}}},
+        scales:{x:{type:"linear",grid:{display:false},ticks:{maxRotation:0,color:"#5E7681",font:{size:11.5},callback:val=>{const D=new Date(val);return R[range]>=432e6?D.toLocaleDateString("es-CO",{day:"2-digit",month:"short"}):R[range]>=864e5?D.toLocaleString("es-CO",{day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}):D.toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit",hour12:false})}},
+          afterBuildTicks(s){const span=s.max-s.min,st=STEPS.find(z=>span/z<=7)||STEPS[11],off=new Date().getTimezoneOffset()*6e4,a=[];for(let t=Math.ceil((s.min-off)/st)*st+off;t<=s.max;t+=st)a.push({value:t});s.ticks=a}},
+          y:{grid:{color:"#E6EDEF"},border:{display:false},ticks:{color:"#5E7681",font:{size:11.5}}}}}})}
+    c.options.scales.x.min=t0;c.options.scales.x.max=now;c.options.scales.y.min=lo-pad;c.options.scales.y.max=hi+pad;
+    c.data.datasets[0].data=d;c.update("none")});
+}
+function episodes(v){const e=[];let cur=null;
+  v.forEach(r=>{const c=causes(r);if(!c.length){cur=null;return}
+    if(!cur||r.t-cur.end>6e5){cur={start:r.t,end:r.t,n:0,k:{}};e.push(cur)}
+    cur.end=r.t;cur.n++;c.forEach(x=>{if(x=="sensor")cur.k.sensor=null;else{const o=cur.k[x];if(o==null||Math.abs(r[x]-(P[x].min+P[x].max)/2)>Math.abs(o-(P[x].min+P[x].max)/2))cur.k[x]=r[x]}})});
+  return e.reverse()}
+function alerts(v,now){
+  const e=episodes(v),l=v[v.length-1];
+  $("#asub").textContent=e.length?`${e.length} ${e.length==1?"episodio":"episodios"} en el periodo`:"";
+  $("#atab").innerHTML=e.length?`<table><thead><tr><th>Estado</th><th>Inicio</th><th>Duración</th><th>Parámetros</th></tr></thead><tbody>`+e.slice(0,40).map(x=>{
+    const act=l&&x.end==l.t&&now-l.t<CFG.online*2;
+    return`<tr><td><span class="pill ${act?"bad":""}">${act?"Activa":"Resuelta"}</span></td><td>${fT(x.start)}</td><td>${x.end==x.start?"1 lectura":dur(x.end-x.start)}</td><td>${Object.entries(x.k).map(([k,z])=>k=="sensor"?`<span class="chip er">Sensor de temperatura</span>`:`<span class="chip">${P[k].n} ${f(z,P[k].d)} ${P[k].u}</span>`).join("")}</td></tr>`}).join("")+"</tbody></table>"
+    :`<div class="empty">${v.length?"Sin alertas en este periodo. Todas las lecturas estuvieron dentro de norma.":"No hay lecturas para evaluar."}</div>`;
+  $("#cmp").innerHTML=K.map(k=>{const s=v.filter(r=>r[k]!=null),ok=s.length?s.filter(r=>!out(k,r[k])).length/s.length*100:null;
+    return`<div><div><span>${P[k].n}</span><b>${f(ok,1)} %</b></div><div class="t"><i style="width:${ok||0}%;background:${ok==null?"#ccc":ok>=95?"#1F9D6B":ok>=80?"#D9902B":"#D2493F"}"></i></div></div>`}).join("");
+}
+
+/* ---------- eventos ---------- */
+$("#rng").onclick=e=>{const b=e.target.closest("button");if(!b)return;range=b.dataset.r;[...$("#rng").children].forEach(x=>x.setAttribute("aria-pressed",x==b));refresh(true)};
+$("#ub").onchange=e=>{ub=e.target.value;render()};
+$("#live").onclick=e=>{e.preventDefault();demo=false;refresh(true)};
+$("#csv").onclick=()=>{const v=view(),h="fecha_hora,ubicacion,ph,turbidez_ntu,tds_ppm,temperatura_c,estado\n",
+  body=v.map(r=>[new Date(r.t).toISOString(),r.ub,r.ph,r.turbidez,r.tds,r.temperatura??"",state(r)].join(",")).join("\n"),
+  a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+h+body],{type:"text/csv"}));a.download=`lecturas_${range}.csv`;a.click()};
+async function refresh(full){
+  try{$("#error").innerHTML="";full||demo?await load():await poll();if(full&&demo)ub="";render()}
+  catch(err){
+    $("#error").innerHTML=`<div class="err"><b>No se pudieron leer las lecturas de Supabase</b><p class="sub">${err.message}</p>
+    <p>Si el error es 401 o la lista llega vacía, falta permitir la lectura pública de la tabla. Ejecuta esto en el SQL Editor de Supabase:</p>
+    <pre>alter table lecturas enable row level security;
+create policy "lectura publica" on lecturas for select to anon using (true);</pre>
+    <button class="btn" id="dm">Ver con datos de demostración</button></div>`;
+    $("#dm").onclick=()=>{demo=true;refresh(true)};render()}
+}
+refresh(true);setInterval(()=>refresh(false),CFG.pollMs);
+</script>
+</body>
+</html>
